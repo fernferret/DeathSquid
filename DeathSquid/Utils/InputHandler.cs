@@ -69,36 +69,91 @@ namespace XNASystem.Utils
 					// Handle GamePad buttons first, if and only if the gampead is plugged in!
 					if(!button.GetButton().Equals(null) && _gamePadState.IsConnected)
 					{
-						// If you don't have a controller plugged in, you shouldent see this...
-
 						// This _superButton Command Has a Key Associated with it, 
 						// Is it DOWN?
 						// Does this command NOT already have an associated press?
+						//if (_keyState.IsKeyDown(button.GetKey()) && !_pressedButtons.Contains(button.GetAssociation()))
+						// OR
 						if (_gamePadState.IsButtonDown(button.GetButton()) && !_buttonLocks.ContainsKey(button.GetAssociation()))
 						{
-							//NO! Sweet, let's set the association.  This is the button that will be counted as pressed
+							//NO! Sweet, let's set the association.  This is the key that will be counted as pressed
 							// UNTIL IT DIES (is unpressed)
 							button.Pressed = PressType.XboxController;
 							//_pressedButtons.Add(button.GetAssociation());
 							_buttonLocks.Add(button.GetAssociation(), button);
 							return true;
 							// Return True, since the button is being held
+							//return false;
 
 						}
-						// Only perform this check if the current button is held, and if it owns the lock!
+						//if (_keyState.IsKeyDown(button.GetKey()) && _pressedButtons.Contains(button.GetAssociation()))
 						if (_gamePadState.IsButtonDown(button.GetButton()) && _buttonLocks.ContainsValue(button))
 						{
 							//We already have an association, are we holdable and still held?
 							if (button.IsHoldable())
 							{
-								return true;
+								if (button.GetHoldable() == 0)
+								{
+									return true;
+								}
+								// If we have a holdable button whos delay is greater than 0 seconds, and we have NO association, create one and return
+								// We have NOTHING
+								if (button.GetHoldable() > 0 && !_holdTimes.ContainsKey(button.GetAssociation()))
+								{
+									_holdTimes.Add(button.GetAssociation(), DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds + button.GetHoldable());
+									return false;
+								}
+								// If we have a holdable button whos delay is greater than 0 seconds, and we have AN association, and it's not done yet, we don't care, it's FALSE!
+								// We DO Have:
+								// A. HoldTime Assoc (Button HAS NOT been held long enough)
+								// We DONT Have:
+								// A. RepeatHoldTime Assoc
+								if (button.GetHoldable() > 0 && _holdTimes.ContainsKey(button.GetAssociation()) && _holdTimes[button.GetAssociation()].CompareTo(DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds) > 0 && !_repeatHoldTimes.ContainsKey(button.GetAssociation()))
+								{
+									//_repeatHoldTimes.Add(button.GetAssociation(), DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds + button.GetHoldable());
+									return false;
+								}
+
+								// HOldable has been held for a valid amount of time, allow one press in! 
+								// We DO Have:
+								// A. HoldTime Assoc (Button HAS been held long enough)
+								// We DONT Have:
+								// A. RepeatHoldTime Assoc
+								if (_holdTimes.ContainsKey(button.GetAssociation()) && _holdTimes[button.GetAssociation()].CompareTo(DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds) < 0 && !_repeatHoldTimes.ContainsKey(button.GetAssociation()) && button.GetHoldableRepeat() >= 0)
+								{
+									// Remove, re-add, rinse, repeat!
+									//_holdTimes.Remove(button.GetAssociation());
+									_repeatHoldTimes.Add(button.GetAssociation(), DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds + button.GetHoldableRepeat());
+									return false;
+								}
+
+								// We DO Have:
+								// A. HoldTime Assoc (Button HAS been held long enough)
+								// B. RepeatHoldTime Assoc (Button HAS been held long enough)
+								// Should be all systems go here to return true
+								if (_repeatHoldTimes.ContainsKey(button.GetAssociation()) && _repeatHoldTimes[button.GetAssociation()].CompareTo(DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds) < 0)
+								{
+									_repeatHoldTimes.Remove(button.GetAssociation());
+									_advances++;
+									return true;
+								}
+								// We DO Have:
+								// A. HoldTime Assoc (Button HAS been held long enough)
+								// B. RepeatHoldTime Assoc (Button HAS NOT been held long enough)
+								if (!_repeatHoldTimes.ContainsKey(button.GetAssociation()) && button.GetHoldableRepeat() >= 0)
+								{
+									_repeatHoldTimes.Add(button.GetAssociation(), DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds + button.GetHoldableRepeat());
+									return false;
+								}
+
+
+
+
 							}
 							// Otherwise, tell the system to only do it once!
 
 							// REMEMBER BUTTON IS STILL HELD DOWN HERE
 							return false;
-							// We return false here, because we don't want to register a continuous press for
-							// non-held buttons!  Their true happened up above!
 
 						}
 						// This _superButton Command Has a Key Associated with it
@@ -108,7 +163,34 @@ namespace XNASystem.Utils
 						if (_gamePadState.IsButtonUp(button.GetButton()) && _buttonLocks.ContainsValue(button))
 						{
 							//_pressedButtons.Remove(button.GetAssociation());
-							_buttonLocks.Remove(button.GetAssociation());
+							//_buttonLocks.Remove(button.GetAssociation());
+
+							// We NEED the check for the time, so users can't glitch and press the up button faster than we want the repeat to be pressed!
+
+							// Now we check for:
+							// A. We have an association on Hold Time
+							// B. We DO NOT have an association on Hold Time REPEAT
+							// C. The button IS HOLDABLE
+							// D. The hold time is finished
+							if (_holdTimes.ContainsKey(button.GetAssociation()) && button.GetHoldable() > 0 && _holdTimes[button.GetAssociation()].CompareTo(DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds) < 0 && !_repeatHoldTimes.ContainsKey(button.GetAssociation()))
+							{
+								//DrawHelper.Debug = "FINSHES:" + DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds;
+								//DrawHelper.Debug = _holdTimes[button.GetAssociation()].CompareTo(DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds) + ",(" + _holdTimes[button.GetAssociation()] + ", " + button.GetHoldable() + ")";
+								_holdTimes.Remove(button.GetAssociation());
+								_buttonLocks.Remove(button.GetAssociation());
+							}
+							else if (_repeatHoldTimes.ContainsKey(button.GetAssociation()) && _repeatHoldTimes[button.GetAssociation()].CompareTo(DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds) < 0)
+							{
+								//DrawHelper.Debug = "FINSHES2:" + _advances + DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds;
+								//DrawHelper.Debug = _holdTimes[button.GetAssociation()].CompareTo(DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds) + ",(" + _holdTimes[button.GetAssociation()] + ", " + button.GetHoldable() + ")";
+								_repeatHoldTimes.Remove(button.GetAssociation());
+								//_holdTimes.Remove(button.GetAssociation());
+								_buttonLocks.Remove(button.GetAssociation());
+							}
+							else if (!_holdTimes.ContainsKey(button.GetAssociation()))
+							{
+								_buttonLocks.Remove(button.GetAssociation());
+							}
 							// We already have an association
 							// Which has just been removed (key finally pulled up, remove association)
 							// Were we holdable?
@@ -224,14 +306,14 @@ namespace XNASystem.Utils
 							// D. The hold time is finished
 							if (_holdTimes.ContainsKey(button.GetAssociation()) && button.GetHoldable() > 0 && _holdTimes[button.GetAssociation()].CompareTo(DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds) < 0 && !_repeatHoldTimes.ContainsKey(button.GetAssociation()))
 							{
-								DrawHelper.Debug = "FINSHES:" + DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds;
+								//DrawHelper.Debug = "FINSHES:" + DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds;
 								//DrawHelper.Debug = _holdTimes[button.GetAssociation()].CompareTo(DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds) + ",(" + _holdTimes[button.GetAssociation()] + ", " + button.GetHoldable() + ")";
 								_holdTimes.Remove(button.GetAssociation());
 								_buttonLocks.Remove(button.GetAssociation());
 							}
 							else if (_repeatHoldTimes.ContainsKey(button.GetAssociation()) && _repeatHoldTimes[button.GetAssociation()].CompareTo(DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds) < 0)
 							{
-								DrawHelper.Debug = "FINSHES2:" + _advances + DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds;
+								//DrawHelper.Debug = "FINSHES2:" + _advances + DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds;
 								//DrawHelper.Debug = _holdTimes[button.GetAssociation()].CompareTo(DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds) + ",(" + _holdTimes[button.GetAssociation()] + ", " + button.GetHoldable() + ")";
 								_repeatHoldTimes.Remove(button.GetAssociation());
 								//_holdTimes.Remove(button.GetAssociation());
