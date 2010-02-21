@@ -8,7 +8,7 @@ public enum ButtonPressed
 }
 public enum ButtonAction
 {
-	MenuAccept, MenuCancel, MenuUp, MenuDown
+	MenuAccept, MenuCancel, MenuUp, MenuDown, NONE, ShipShoot, ShipMoveRightSlow, ShipMoveLeftSlow
 }
 namespace XNASystem.Utils
 {
@@ -33,13 +33,13 @@ namespace XNASystem.Utils
 										new ButtonAlias(Buttons.LeftThumbstickUp, -1,-1,"MenuUp"),
 										new ButtonAlias(Keys.NumPad8,-1,-1,"MenuUp"),
 										new ButtonAlias(Keys.W,2,.5,"MenuUp"),
-										new ButtonAlias(Keys.Up,2,-1,"MenuUp")
+										new ButtonAlias(Keys.Up,-1,-1,"MenuUp")
 			                     	});
 			_superButton.Add(ButtonAction.MenuDown, new List<ButtonAlias>
 			                     	{
 			                     		new ButtonAlias(Buttons.DPadDown, -1,-1,"MenuDown"),
 										new ButtonAlias(Buttons.LeftThumbstickDown, -1,-1,"MenuDown"),
-										new ButtonAlias(Keys.Down,1,-1,"MenuDown"),
+										new ButtonAlias(Keys.Down,-1,-1,"MenuDown"),
 										new ButtonAlias(Keys.NumPad2,-1,-1,"MenuDown"),
 										new ButtonAlias(Keys.S,1,.25,"MenuDown")
 			                     	});
@@ -47,13 +47,32 @@ namespace XNASystem.Utils
 			                     	{
 			                     		new ButtonAlias(Buttons.A, -1,-1,"MenuAccept"),
 										new ButtonAlias(Buttons.Start, -1,-1,"MenuAccept"),
-										new ButtonAlias(Keys.Enter, -1,-1,"MenuAccept")
+										new ButtonAlias(Keys.Enter, -1,.2,"MenuAccept")
 			                     	});
 			_superButton.Add(ButtonAction.MenuCancel, new List<ButtonAlias>
 			                     	{
 			                     		new ButtonAlias(Buttons.B, -1,-1,"MenuCancel"),
 										new ButtonAlias(Buttons.Back, -1,-1,"MenuCancel"),
-										new ButtonAlias(Keys.Delete, -1,-1,"MenuCancel")
+										new ButtonAlias(Keys.Delete, .5,.2,"MenuCancel")
+			                     	});
+
+			_superButton.Add(ButtonAction.ShipShoot, new List<ButtonAlias>
+			                     	{
+			                     		new ButtonAlias(Buttons.A, -1,-1,"ShipShoot"),
+										new ButtonAlias(Buttons.Y, -1,-1,"ShipShoot"),
+										new ButtonAlias(Keys.Delete, -1,-1,"ShipShoot")
+			                     	});
+			_superButton.Add(ButtonAction.ShipMoveLeftSlow, new List<ButtonAlias>
+			                     	{
+			                     		new ButtonAlias(Buttons.DPadLeft, -1,0,"ShipMoveLeftSlow"),
+										new ButtonAlias(Buttons.LeftThumbstickLeft, -1,0,"ShipMoveLeftSlow"),
+										new ButtonAlias(Keys.Left, -1,0,"ShipMoveLeftSlow")
+			                     	});
+			_superButton.Add(ButtonAction.ShipMoveRightSlow, new List<ButtonAlias>
+			                     	{
+			                     		new ButtonAlias(Buttons.DPadRight, -1,0,"ShipMoveRightSlow"),
+										new ButtonAlias(Buttons.LeftThumbstickRight, -1,0,"ShipMoveRightSlow"),
+										new ButtonAlias(Keys.Right, -1,0,"ShipMoveRightSlow")
 			                     	});
 		}
 
@@ -317,7 +336,7 @@ namespace XNASystem.Utils
 								//DrawHelper.Debug = _holdTimes[button.GetAssociation()].CompareTo(DeathSquid.DeathSquid.CurrentGameTime.TotalRealTime.TotalSeconds) + ",(" + _holdTimes[button.GetAssociation()] + ", " + button.GetHoldable() + ")";
 								_repeatHoldTimes.Remove(button.GetAssociation());
 								//_holdTimes.Remove(button.GetAssociation());
-								_buttonLocks.Remove(button.GetAssociation());
+								//_buttonLocks.Remove(button.GetAssociation());
 							}
 							else if (!_holdTimes.ContainsKey(button.GetAssociation()))
 							{
