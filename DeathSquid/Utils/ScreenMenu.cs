@@ -62,16 +62,10 @@ namespace DeathSquid.Utils
 			if (DeathSquid.GetInput.IsButtonPressed(ButtonAction.MenuAccept))
 			{
 				SetButtonPressed(ButtonAction.MenuAccept);
-				_menuText.Add(_menuText[0]);
 			}
 			if (DeathSquid.GetInput.IsButtonPressed(ButtonAction.MenuCancel))
 			{
-				if (_menuText.Count > 4)
-				{
-					_menuText.RemoveAt(_choice);
-					if (_choice >= 4)
-						_choice--;
-				}
+
 			}
 		}
 		public void Draw()

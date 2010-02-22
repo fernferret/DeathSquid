@@ -9,11 +9,6 @@ namespace DeathSquid
 	{
 		private const int Width = 50;
 		private const int Height = 50;
-
-		private static readonly List<String> StandardSprites = new List<String> { "enemy_basic_1", "enemy_basic_2" };
-		private static readonly List<String> DeadSprites = new List<String> { "enemy_explode_1", "enemy_explode_2", "enemy_explode_3", "explosion_1", "explosion_2", "explosion_3", "explosion_4", "explosion_5", "explosion_6", "explosion_7", "explosion_8" };
-		private static readonly List<String> PainSprites = new List<String> { "shooter_enemy_pain" };
-		private static readonly List<String> BlankSprites = new List<String> { "dead_ship" };
 		private static readonly ShooterProjectileBasic Shot = new ShooterProjectileBasic();
 
 		public ShooterEnemyBasicNew(float xPosition, float yPosition) : 
@@ -36,13 +31,13 @@ namespace DeathSquid
 						-1,
 						Shot)
 				}, 
-			Color.White, 
-			StandardSprites, 
-			DeadSprites, 
-			PainSprites, 
-			BlankSprites 
+			Color.White
 			)
 		{
+			StandardSprites = new List<String> { "enemy_basic_1", "enemy_basic_2" };
+			DeadSprites = new List<String> { "enemy_explode_1", "enemy_explode_2", "enemy_explode_3", "explosion_1", "explosion_2", "explosion_3", "explosion_4", "explosion_5", "explosion_6", "explosion_7", "explosion_8" };
+			PainSprites = new List<String> { "shooter_enemy_pain" };
+			BlankSprite = new List<String> { "dead_ship" };
 		}
 
 		public override void UpdatePostion(float x, float y)
@@ -59,7 +54,7 @@ namespace DeathSquid
 
 			if (_spriteQueue.Count <= 1)
 			{
-				AddSpritesToDraw(_standardSprites);
+				AddSpritesToDraw(StandardSprites);
 			}
 		}
 	}

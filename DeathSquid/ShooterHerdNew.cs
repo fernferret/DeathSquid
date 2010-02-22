@@ -108,11 +108,11 @@ namespace DeathSquid
 				}
 				if (o.GetX() + o.GetWidth() >= _width && !o.IsDying())
 				{
-					o.Kill();
+					//o.Kill();
 				}
 				if(o.GetX() < 0 && !o.IsDying())
 				{
-					o.Kill();
+					//o.Kill();
 				}
 			}
 

@@ -15,7 +15,7 @@ namespace DeathSquid
 			Color.White,
 			1,
 			new List<String> { "projectile" },
-			new List<String> { "projectile_explosion_1", "projectile_explosion_1", "projectile_explosion_1" },
+			new List<String> { "projectile_explosion_1", "projectile_explosion_2", "projectile_explosion_3" },
 			new List<String> { "dead_ship" })
 		{
 			AddGun(new ShooterGunBasic(_xPosition, _yPosition, _xPosition + 1, _yPosition + 1, new ShooterProjectileBasic()));

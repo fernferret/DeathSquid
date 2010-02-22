@@ -7,8 +7,15 @@ namespace DeathSquid
 	class ShooterProjectileObjectNew : ShooterGameObjectNew
 	{
 		protected ShooterProjectileObjectNew(int width, int height, int duration, List<ShooterGunObject> guns, Color color, int damage, List<String> standardSprites, List<String> deadSprites, List<String> blankSprite) : 
-			base(0, 0, width, height, 0, 0, duration, damage, 0, guns, color, standardSprites, deadSprites, standardSprites, blankSprite) {}
-	
+			base(0, 0, width, height, 0, 0, duration, damage, 0, guns, color)
+		{
+			PainSprites = new List<string>();
+			StandardSprites = standardSprites;
+			DeadSprites = deadSprites;
+			BlankSprite = blankSprite;
+
+		}
+		
 		public void SetX(float x)
 		{
 
@@ -32,15 +39,14 @@ namespace DeathSquid
 
 			}
 		}
-
-		public void SetXVelocity(float x)
+		public new void SetXVelocity(float x)
 		{
-			this._xVelocity = x;
+			_xVelocity = x;
 		}
 
-		public void SetYVelocity(float y)
+		public new void SetYVelocity(float y)
 		{
-			this._yVelocity = y;
+			_yVelocity = y;
 		}
 
 		public override void Kill()
@@ -48,7 +54,7 @@ namespace DeathSquid
 			if (!_isDying)
 			{
 				RemoveAllSpritesToDraw();
-				AddSpritesToDraw(_deadSprites);
+				AddSpritesToDraw(DeadSprites);
 				_isDying = true;
 
 				foreach(ShooterGunObject g in _guns)
@@ -62,7 +68,7 @@ namespace DeathSquid
 		{
 			List<ShooterGunObject> clones = new List<ShooterGunObject>();
 
-			foreach(ShooterGunObject g in _guns)
+			foreach(var g in _guns)
 			{
 				clones.Add(g.Clone());
 			}
@@ -70,12 +76,10 @@ namespace DeathSquid
 			return clones;
 		}
 
-
-
 		//generates a deep clone of the object
 		public ShooterProjectileObjectNew Clone()
 		{
-			return new ShooterProjectileObjectNew(_width, _height, _score, _guns, _color, _damage,  _standardSprites, _deadSprites, _blankSprite );
+			return new ShooterProjectileObjectNew(_width, _height, _score, _guns, _color, _damage,  StandardSprites, DeadSprites, BlankSprite );
 		}
 	
 	}

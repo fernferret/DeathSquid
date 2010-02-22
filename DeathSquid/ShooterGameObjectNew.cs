@@ -29,19 +29,28 @@ namespace DeathSquid
 		//animation related
 		private float timer = 0f;
 		private float interval = 1000f / 7f;
-		protected List<String> _standardSprites;
-		protected List<String> _deadSprites;
-		protected List<String> _painSprites;
-		protected List<String> _blankSprite;
+		protected List<String> StandardSprites { get; set; }
+		protected List<String> DeadSprites { get; set; }
+		protected List<String> PainSprites { get; set; }
+		protected List<String> BlankSprite { get; set; }
 		protected Queue<String> _spriteQueue;
-
-		protected ShooterGameObjectNew(float xPosition, float yPosition, int width, int height, float xVelocity, float yVelocity, int hitPoints, int damage, int score, List<ShooterGunObject> guns, Color color, List<String> standardSprites, List<String> deadSprites, List<String> painSprites, List<String> blankSprite)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="xPosition">The X Position</param>
+		/// <param name="yPosition">The Y Position</param>
+		/// <param name="width">The width of this object</param>
+		/// <param name="height">The height of this object</param>
+		/// <param name="xVelocity">The X Velocity</param>
+		/// <param name="yVelocity">The Y Velocity</param>
+		/// <param name="hitPoints">The amount of damage this object can take before it is destroyed</param>
+		/// <param name="damage">The amount of damage this unit does upon hitting another one</param>
+		/// <param name="score"></param>
+		/// <param name="guns"></param>
+		/// <param name="color"></param>
+		protected ShooterGameObjectNew(float xPosition, float yPosition, int width, int height, float xVelocity, float yVelocity, int hitPoints, int damage, int score, List<ShooterGunObject> guns, Color color)
 		{
 			_xPosition = xPosition;
-			_blankSprite = blankSprite;
-			_painSprites = painSprites;
-			_deadSprites = deadSprites;
-			_standardSprites = standardSprites;
 			_xVelocity = xVelocity;
 			_yVelocity = yVelocity;
 			_color = color;
@@ -57,7 +66,7 @@ namespace DeathSquid
 			_isDying = false;
 			_isHurt = false;
 			_spriteQueue = new Queue<String>();
-			AddSpritesToDraw(_standardSprites);
+			//AddSpritesToDraw(StandardSprites);
 		}
 
 		public virtual void UpdatePostion(float x, float y)
@@ -74,7 +83,7 @@ namespace DeathSquid
 
 			if(_spriteQueue.Count <= 1)
 			{
-				AddSpritesToDraw(_standardSprites);
+				AddSpritesToDraw(StandardSprites);
 			}
 		}
 
@@ -85,7 +94,7 @@ namespace DeathSquid
 				//why do I need this?
 				if (_spriteQueue.Count <= 0)
 				{
-					AddSpritesToDraw(_standardSprites);
+					AddSpritesToDraw(StandardSprites);
 				}
 
 				DeathSquid.GameSpriteBatch.Draw(DeathSquid.GameGraphics[_spriteQueue.Peek()], new Vector2(_xPosition, _yPosition), _color);
@@ -125,7 +134,7 @@ namespace DeathSquid
 		public void Hurt()
 		{
 			RemoveAllSpritesToDraw();
-			AddSpritesToDraw(_painSprites);
+			AddSpritesToDraw(PainSprites);
 		}
 
 		public virtual void Kill()
@@ -133,7 +142,7 @@ namespace DeathSquid
 			if (!_isDying)
 			{
 				RemoveAllSpritesToDraw();
-				AddSpritesToDraw(_deadSprites);
+				AddSpritesToDraw(DeadSprites);
 				_isDying = true;
 			}
 		}
@@ -163,7 +172,7 @@ namespace DeathSquid
 			{
 				if (_spriteQueue.Count <= 0)
 				{
-					AddSpritesToDraw(_blankSprite);
+					AddSpritesToDraw(BlankSprite);
 				}
 				_spriteQueue.Dequeue();
 				timer = 0f;
@@ -215,7 +224,7 @@ namespace DeathSquid
 
 		public bool IsDead()
 		{
-			return (IsDying() && !_spriteQueue.Contains(_deadSprites.Last()));
+			return (IsDying() && !_spriteQueue.Contains(DeadSprites.Last()));
 		}
 
 		public float GetWidth()

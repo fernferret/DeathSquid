@@ -27,11 +27,9 @@ namespace DeathSquid
 
 		public ShooterNew()
 		{
-			_ship = new ShooterShipNew(50, _width/2);
+			_ship = new ShooterShipNew(50, (float)_width/2);
 
-			_shipStuff = new List<ShooterGameObjectNew>();
-
-			_shipStuff.Add(_ship);
+			_shipStuff = new List<ShooterGameObjectNew> {_ship};
 
 			_levels = new List<ShooterLevelNew>();
 
@@ -40,22 +38,25 @@ namespace DeathSquid
 
 			//remove later
 			StartGame(0);
-
 		}
 
 		public void AdvanceLevel()
 		{
-			if (_currentLevel <= _levels.Count)
+			if (_currentLevel < _levels.Count-1)
 			{
 				_currentLevel++;
 				_herdList = _levels[_currentLevel].GetHerdList();
 				ResetGame();
 			}
+			else
+			{
+				DeathSquid.CurrentScreen = DeathSquid.MainMenu;
+			}
 		}
 
 		public void ResetGame()
 		{
-			_ship = new ShooterShipNew(50, _width/2);
+			_ship = new ShooterShipNew((float)_width/2, 50);
 		}
 
 		public List<PowerUp> GetPowerUps()
@@ -73,7 +74,7 @@ namespace DeathSquid
 				
 			#region 1st level new
 
-			ShooterHerdNew enemies1 = new ShooterHerdNew(0, 0, _width, _height, (float)0.5, 1);
+			ShooterHerdNew enemies1 = new ShooterHerdNew(0, 0, _width, _height, (float)5, 1);
 			ShooterLevelNew level1 = new ShooterLevelNew();
 
 			enemies1.AddObject(new ShooterEnemyBasicNew(1, 5));
@@ -158,9 +159,9 @@ namespace DeathSquid
 			{
 				_shipShots.Add(p);
 			}
-		}*/
+		}
 
-		/*private void AddEnemyShots(List<ShooterGameObjectNew> shots)
+		private void AddEnemyShots(List<ShooterGameObjectNew> shots)
 		{
 			foreach (ShooterProjectileObjectNew p in shots)
 			{

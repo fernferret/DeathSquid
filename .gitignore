@@ -1,0 +1,9 @@
+*.contentproj
+*.user
+*.cachefile
+*.suo
+*.sln
+*/obj/
+*/bin/
+*/_ReSharper*
+DeathSquid/Content/obj/

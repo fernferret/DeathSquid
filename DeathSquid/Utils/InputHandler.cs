@@ -60,7 +60,8 @@ namespace XNASystem.Utils
 			                     	{
 			                     		new ButtonAlias(Buttons.A, -1,-1,"ShipShoot"),
 										new ButtonAlias(Buttons.Y, -1,-1,"ShipShoot"),
-										new ButtonAlias(Keys.Delete, -1,-1,"ShipShoot")
+										new ButtonAlias(Keys.V,0,0,"ShipShoot"),
+										new ButtonAlias(Keys.Space, .1,.1,"ShipShoot")
 			                     	});
 			_superButton.Add(ButtonAction.ShipMoveLeftSlow, new List<ButtonAlias>
 			                     	{

@@ -23,8 +23,8 @@ namespace DeathSquid
 		public static int ScreenWidth { get; set; }
 		public static int ScreenHeight { get; set; }
 		public static GameTime CurrentGameTime;
-		SMenu _menu;
 		public static IScreen CurrentScreen;
+		public static SMenu MainMenu;
 
 		public DeathSquid()
 		{
@@ -33,7 +33,7 @@ namespace DeathSquid
 			ScreenWidth = 1280;
 			ScreenHeight = 720;
 			Content.RootDirectory = "Content";
-			_menu = new SMenu();
+			MainMenu = new SMenu();
 			SystemFonts = new Dictionary<string, SpriteFont>();
 			
 			GameGraphics = new Dictionary<string, Texture2D>();
@@ -139,7 +139,7 @@ namespace DeathSquid
 			GameGraphics.Add("projectile_explosion_1", Content.Load<Texture2D>("Graphics//Game//projectile_explosion_1"));//62
 			GameGraphics.Add("projectile_explosion_2", Content.Load<Texture2D>("Graphics//Game//projectile_explosion_2"));//63
 			GameGraphics.Add("projectile_explosion_3", Content.Load<Texture2D>("Graphics//Game//projectile_explosion_3"));//62
-			CurrentScreen = _menu;
+			CurrentScreen = MainMenu;
 		}
 
 		/// <summary>

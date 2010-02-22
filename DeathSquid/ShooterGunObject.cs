@@ -47,15 +47,14 @@ namespace DeathSquid
 
 		public List<ShooterGameObjectNew> Shoot()
 		{
-			List<ShooterGameObjectNew> projectiles;
-			projectiles = new List<ShooterGameObjectNew>();
+			var projectiles = new List<ShooterGameObjectNew>();
 			var clone = _projectile.Clone();
 			projectiles.Add(clone);
 			clone.SetX(_xPosition - _projectile.GetWidth()/2);
 			clone.SetY(_yPosition);
 			clone.SetXVelocity(GetXVelocity());
 			clone.SetYVelocity(GetYVelocity());
-			//projectiles.AddRange(clone.Shoot());
+			projectiles.AddRange(clone.Shoot());
 			return projectiles;
 		}
 

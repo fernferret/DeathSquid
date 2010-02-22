@@ -5,7 +5,7 @@ using DeathSquid.Utils;
 
 namespace DeathSquid
 {
-	class SMenu:IScreen
+	public class SMenu:IScreen
 	{
 		private ScreenMenu _menu;
 		private readonly List<String> _menuText;
